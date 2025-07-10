@@ -4,21 +4,28 @@ const dashboardApi = baseApi.injectEndpoints({
   endpoints: (builder) => ({
     getDashboardStatus: builder.query({
       query: () => ({
-        url: "/get-dashboard-data",
+        url: "/users/dashboard/status",
+        method: "GET",
+      }),
+      transformResponse: (response) => response,
+    }),
+    getUsers: builder.query({
+      query: () => ({
+        url: "/users/recent/users",
         method: "GET",
       }),
       transformResponse: (response) => response,
     }),
     getIncomeRatio: builder.query({
       query: (year) => ({
-        url: `/admin/getIncomeRatio?year=${year}`,
+        url: `/paymnet/income-statistics`,
         method: "GET",
       }),
       transformResponse: (response) => response,
     }),
     getUserAndIncome: builder.query({
       query: () => ({
-        url: "/admin/getUserAndIncome",
+        url: "/paymnet/totaluser-and-totalIncome",
         method: "GET",
       }),
       transformResponse: (response) => response,
@@ -26,5 +33,5 @@ const dashboardApi = baseApi.injectEndpoints({
   }),
 });
 
-export const { useGetDashboardStatusQuery, useGetIncomeRatioQuery, useGetUserAndIncomeQuery } =
+export const { useGetDashboardStatusQuery, useGetIncomeRatioQuery, useGetUserAndIncomeQuery , useGetUsersQuery } =
   dashboardApi;

@@ -7,6 +7,9 @@ import { FaArrowTrendUp } from "react-icons/fa6";
 const Status = () => {
   const { data, isLoading } = useGetDashboardStatusQuery();
 
+  const alldata = data?.data?.attributes;
+
+
   return (
     <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
 
@@ -18,7 +21,7 @@ const Status = () => {
         </div>
         <div className="flex items-center mt-5 gap-3">
           <h1 className="text-4xl font-semibold text-[#222222]">
-            {data?.totalNumberOfUser || "500"}
+            {alldata?.totalUsers || "00"}
           </h1>
           <p className="bg-[#ffd4001f] text-[#ffd400] rounded-lg px-2 py-1 flex items-center gap-1"> <FaArrowTrendUp className="text-[#cf7e13]" /> 20%</p>
         </div>
@@ -34,7 +37,7 @@ const Status = () => {
         </div>
         <div className="flex items-center mt-5 gap-3">
           <h1 className="text-4xl font-semibold text-[#222222]">
-            {data?.totalNumberOfUser || "500"}
+            Є {alldata?.totalEarnings || "00"}
           </h1>
         </div>
       </div>
@@ -46,7 +49,7 @@ const Status = () => {
         </div>
         <div className="flex items-center mt-5 gap-3">
           <h1 className="text-4xl font-semibold text-[#222222]">
-            {data?.totalNumberOfUser || "500"}
+            {alldata?.totalSubscribers || "00"}
           </h1>
         </div>
       </div>

@@ -3,6 +3,7 @@ import { useState } from "react";
 import { HiOutlineDotsHorizontal } from "react-icons/hi";
 import dayjs from "dayjs"; // Ensure dayjs is imported
 import { IoEyeOutline } from "react-icons/io5";
+import { useGetUsersQuery } from "../../../redux/features/dashboard/dashboardApi";
 
 const RecentTransactions = () => {
   const [searchText, setSearchText] = useState("");
@@ -12,17 +13,10 @@ const RecentTransactions = () => {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedUser, setSelectedUser] = useState(null); // Store selected user details
 
-  // Demo data for users
-  const demoUserData = [
-    { id: 1, fullName: "John Doe", email: "john.doe@example.com", role: "Admin", createdAt: "2023-06-16T12:00:00Z" },
-    { id: 2, fullName: "Jane Smith", email: "jane.smith@example.com", role: "User", createdAt: "2023-06-14T12:00:00Z" },
-    { id: 3, fullName: "Bob Johnson", email: "bob.johnson@example.com", role: "Manager", createdAt: "2023-05-25T12:00:00Z" },
-    { id: 4, fullName: "Alice Williams", email: "alice.williams@example.com", role: "User", createdAt: "2023-06-01T12:00:00Z" },
-    { id: 5, fullName: "Charlie Brown", email: "charlie.brown@example.com", role: "User", createdAt: "2023-04-18T12:00:00Z" },
-    { id: 6, fullName: "David White", email: "david.white@example.com", role: "Admin", createdAt: "2023-06-08T12:00:00Z" },
-    { id: 7, fullName: "Eva Green", email: "eva.green@example.com", role: "User", createdAt: "2023-03-22T12:00:00Z" },
-    { id: 8, fullName: "Frank Harris", email: "frank.harris@example.com", role: "Manager", createdAt: "2023-06-10T12:00:00Z" },
-  ];
+  const { data } = useGetUsersQuery()
+
+  const allRecentUser = data?.data?.attributes;
+
 
   // Handle User Blocking (Demo)
   const handleUserRemove = (id) => {
@@ -91,7 +85,7 @@ const RecentTransactions = () => {
     },
   ];
 
-  const filteredData = demoUserData.filter((user) => {
+  const filteredData = allRecentUser?.filter((user) => {
     const matchesText =
       `${user.fullName}`.toLowerCase().includes(searchText.toLowerCase());
     const matchesDate = selectedDate
@@ -102,12 +96,12 @@ const RecentTransactions = () => {
   });
 
   // Paginate the filtered data
-  const paginatedData = filteredData.slice(
+  const paginatedData = filteredData?.slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize
   );
 
-  const dataSource = paginatedData.map((user, index) => ({
+  const dataSource = paginatedData?.map((user, index) => ({
     key: user.id,
     si: (currentPage - 1) * pageSize + index + 1, // Correct the serial number based on page
     userName: `${user?.fullName}`,
@@ -148,7 +142,7 @@ const RecentTransactions = () => {
         <Pagination
           current={currentPage}
           pageSize={pageSize}
-          total={filteredData.length}
+          total={filteredData?.length}
           onChange={(page, pageSize) => {
             setCurrentPage(page);
             setPageSize(pageSize);

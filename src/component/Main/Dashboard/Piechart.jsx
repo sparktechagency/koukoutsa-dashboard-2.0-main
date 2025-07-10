@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Select } from 'antd';
 import { PieChart, Pie, Cell, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { useGetUserAndIncomeQuery } from '../../../redux/features/dashboard/dashboardApi';
 
 // Sample raw data for the months
 const rawData = {
@@ -12,10 +13,13 @@ const Piechart = () => {
   const [month, setMonth] = useState('august'); // Default month is 'august'
   const mainData = rawData[month]; // Get data for the selected month
 
-  // Demo data for the Pie chart (based on rawData)
+  const { data } = useGetUserAndIncomeQuery();
+  const allData = data?.data?.attributes || {}; // Fallback to empty object if data is undefined
+
+  // Format the allData to match the expected format for the Pie chart
   const pieData = [
-    { name: 'Income', value: mainData.users },
-    { name: 'Collaborators', value: mainData.collaborators },
+    { name: 'Total Users', value: allData.totalUsers || 0 },
+    { name: 'Total Transactions', value: allData.totalIncome || 0 },
   ];
 
   // Handle month change (from dropdown)
@@ -29,12 +33,8 @@ const Piechart = () => {
   return (
     <div className="w-full col-span-full md:col-span-2 bg-white rounded-lg border border-primary p-5">
       <div className="flex justify-between mb-5">
-        <h2 className="text-xl font-semibold">{mainData.month} Pie Chart</h2>
-        {/* Dropdown for month selection */}
-        <Select defaultValue="august" style={{ width: 150 }} onChange={handleChange}>
-          <Select.Option value="august">August</Select.Option>
-          <Select.Option value="september">September</Select.Option>
-        </Select>
+        <h2 className="text-xl font-semibold">Stutas Summary</h2>
+
       </div>
 
       <div className="w-full">
@@ -42,13 +42,14 @@ const Piechart = () => {
           {/* Render the Pie Chart */}
           <PieChart>
             <Pie
-              data={pieData}
+              data={pieData}  // Pass the correctly formatted data
               dataKey="value"
               nameKey="name"
               outerRadius={150}
               innerRadius={60}
               paddingAngle={5}
-              label={({ name, value }) => `${name}: ${value}`}
+              labelLine={false}  // Disable lines from the center to the labels
+              label={({ name, value }) => `${name}: ${value}`}  // Label customization
             >
               {pieData.map((entry, index) => (
                 <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />

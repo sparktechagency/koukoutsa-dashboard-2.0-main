@@ -6,26 +6,21 @@ import { FaAngleLeft, FaArrowLeft } from "react-icons/fa";
 import { Link } from "react-router-dom";
 import { GoInfo } from "react-icons/go";
 import { IoEyeOutline } from "react-icons/io5";
+import { useGetAllUsersQuery } from "../../../redux/features/user/userApi";
 
 const { Item } = Form;
 
 const Users = () => {
-  // Demo data (simulating fetched data)
-  const demoUserData = [
-    { id: 1, fullName: "John Doe", accountID: "A123", email: "john.doe@example.com", phoneNumber: "123-456-7890", address_line1: "123 Main St", createdAt: "2023-06-10", status: "active", gender: "male", image: { url: "" } },
-    { id: 2, fullName: "Jane Smith", accountID: "A124", email: "jane.smith@example.com", phoneNumber: "987-654-3210", address_line1: "456 Oak St", createdAt: "2023-06-05", status: "inactive", gender: "female", image: { url: "" } },
-    { id: 3, fullName: "Bob Johnson", accountID: "A125", email: "bob.johnson@example.com", phoneNumber: "555-123-4567", address_line1: "789 Pine St", createdAt: "2023-06-15", status: "active", gender: "male", image: { url: "" } },
-    { id: 4, fullName: "Alice Williams", accountID: "A126", email: "alice.williams@example.com", phoneNumber: "444-555-6789", address_line1: "101 Maple St", createdAt: "2023-05-25", status: "active", gender: "female", image: { url: "" } },
-    { id: 5, fullName: "Charlie Brown", accountID: "A127", email: "charlie.brown@example.com", phoneNumber: "222-333-4444", address_line1: "202 Birch St", createdAt: "2023-04-18", status: "inactive", gender: "male", image: { url: "" } },
-    { id: 6, fullName: "David White", accountID: "A128", email: "david.white@example.com", phoneNumber: "111-222-3333", address_line1: "303 Cedar St", createdAt: "2023-06-01", status: "active", gender: "male", image: { url: "" } },
-    { id: 7, fullName: "Eva Green", accountID: "A129", email: "eva.green@example.com", phoneNumber: "999-888-7777", address_line1: "404 Elm St", createdAt: "2023-03-22", status: "inactive", gender: "female", image: { url: "" } },
-    { id: 8, fullName: "Frank Harris", accountID: "A130", email: "frank.harris@example.com", phoneNumber: "333-444-5555", address_line1: "505 Birchwood St", createdAt: "2023-06-10", status: "active", gender: "male", image: { url: "" } },
-  ];
+  const { data, isLoading, refetch } = useGetAllUsersQuery(undefined, {
+    refetchOnMountOrArgChange: true,  // Ensures refetch on mount or arg change
+  });
+
+  const allUsers = data?.data?.attributes?.users || []; // Fallback to an empty array if data is undefined
 
   const [searchText, setSearchText] = useState("");
   const [selectedDate, setSelectedDate] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [dataSource, setDataSource] = useState(demoUserData); // Initialize with demo data
+  const [dataSource, setDataSource] = useState(allUsers); // Initialize with demo data
 
   // User details visibility state
   const [detailsVisible, setDetailsVisible] = useState(false);
@@ -34,10 +29,10 @@ const Users = () => {
   // Search Filter
   useEffect(() => {
     if (searchText.trim() === "") {
-      setDataSource(demoUserData); // Reset to all users
+      setDataSource(allUsers); // Reset to all users
     } else {
       setDataSource(
-        demoUserData.filter(
+        allUsers?.filter(
           (user) =>
             user.fullName?.toLowerCase().includes(searchText.toLowerCase()) ||
             user.email?.toLowerCase().includes(searchText.toLowerCase()) ||
@@ -45,21 +40,26 @@ const Users = () => {
         )
       );
     }
-  }, [searchText]);
+  }, [searchText, allUsers]);
 
   // Date Filter
   useEffect(() => {
     if (!selectedDate) {
-      setDataSource(demoUserData); // Reset to all users if no date is selected
+      setDataSource(allUsers); // Reset to all users if no date is selected
     } else {
       const formattedDate = selectedDate.format("YYYY-MM-DD");
       setDataSource(
-        demoUserData.filter(
+        allUsers?.filter(
           (user) => moment(user.createdAt).format("YYYY-MM-DD") === formattedDate
         )
       );
     }
-  }, [selectedDate]);
+  }, [selectedDate, allUsers]);
+
+  // Trigger refetch when component is mounted or on reload
+  useEffect(() => {
+    refetch();  // Force refetch on component mount or reload
+  }, [refetch]);
 
   const handleShowDetails = (user) => {
     setUserDataFull(user); // Set the selected user details
@@ -92,7 +92,7 @@ const Users = () => {
     <section>
       <div className="md:flex justify-between items-center py-6 mb-4">
         <Link to={"/"} className="text-2xl flex items-center">
-          <FaAngleLeft />  Renter User list  {detailsVisible ? "Details" : ""}
+          <FaAngleLeft /> Renter User list {detailsVisible ? "Details" : ""}
         </Link>
         <Form layout="inline" className="flex space-x-4">
           <Item name="date">
@@ -140,15 +140,14 @@ const Users = () => {
             columns={columns}
             dataSource={dataSource}
             rowKey="id"
-            loading={false}
+            loading={isLoading}
           />
         </ConfigProvider>
 
         {/* User Details Section */}
         <div className={`${detailsVisible ? "block" : "hidden"} duration-500`}>
           <div className=" w-full md:w-2/4 mx-auto border-2 border-[#ffd400] p-2 rounded-lg relative">
-
-            <div onClick={() => setDetailsVisible(false)} className="absolute bg-[#ffd400] text-white p-3 rounded-full -top-5 -left-5 cursor-pointer" >
+            <div onClick={() => setDetailsVisible(false)} className="absolute bg-[#ffd400] text-white p-3 rounded-full -top-5 -left-5 cursor-pointer">
               <FaArrowLeft className="text-2xl" />
             </div>
 
@@ -162,7 +161,6 @@ const Users = () => {
                 />
                 <h1 className="text-2xl font-semibold">{userDataFull?.fullName}</h1>
               </div>
-
             </div>
 
             {/* User Details Section */}
@@ -193,11 +191,7 @@ const Users = () => {
               </div>
             </div>
           </div>
-
-
         </div>
-
-
       </div>
     </section>
   );
