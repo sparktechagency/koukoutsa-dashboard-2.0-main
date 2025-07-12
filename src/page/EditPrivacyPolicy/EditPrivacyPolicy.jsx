@@ -17,8 +17,8 @@ const EditPrivacyPolicy = () => {
     console.log("Updated Privacy Policy Content:", content);
 
     try {
-      const res = await updatePrivacyPolicy({ privacyPolicy: content }).unwrap();
-      if (res?.success) {
+      const res = await updatePrivacyPolicy({ content: content }).unwrap();
+      if (res?.code === 200) {
         message.success(res?.message);
         navigate("/settings/privacy-policy");
       }
@@ -47,6 +47,7 @@ const EditPrivacyPolicy = () => {
             <ReactQuill
               value={content}
               onChange={(value) => setContent(value)}
+              placeholder="Write your privacy policy here..."
               modules={{
                 toolbar: [
                   [{ header: [1, 2, 3, 4, 5, 6, false] }],

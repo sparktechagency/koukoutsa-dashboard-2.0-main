@@ -17,9 +17,7 @@ const Header = ({ toggleSidebar }) => {
 
   const { data: userProfile, refetch } = useGetUserProfileQuery();
   const user = userProfile?.data?.attributes?.user || {};
-
-  console.log(user);
-
+ 
 
 
   const { data } = useGetAllNotificationsQuery();

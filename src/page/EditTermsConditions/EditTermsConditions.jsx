@@ -4,7 +4,7 @@ import { Button, Form, message } from "antd";
 import ReactQuill from "react-quill"; // Import React Quill
 import "react-quill/dist/quill.snow.css"; // Import Quill styles
 import { useState } from "react";
-import { useUpdateTramsAndConditionsAllMutation } from "../../redux/features/setting/settingApi";
+import { useGetTermsAndConditionsQuery, useUpdateTramsAndConditionsAllMutation } from "../../redux/features/setting/settingApi";
 
 const EditTermsConditions = () => {
 
@@ -12,7 +12,9 @@ const EditTermsConditions = () => {
 
   const navigate = useNavigate();
 
+  const { data: privacyPolicy, refetch } = useGetTermsAndConditionsQuery();
 
+  console.log(privacyPolicy?.data?.attributes?.content);
 
 
 
@@ -26,9 +28,9 @@ const EditTermsConditions = () => {
     // Handle form submission, e.g., update the Terms and Conditions in the backend
 
     try {
-      const res = await updateTramsAndCondition({ termsAndConditions: content }).unwrap();
+      const res = await updateTramsAndCondition({ content: content }).unwrap();
       console.log(res);
-      if (res?.success) {
+      if (res?.code === 200) {
         message.success(res?.message);
         navigate("/settings/terms-conditions");
       }
@@ -58,8 +60,9 @@ const EditTermsConditions = () => {
           {/* React Quill for Terms and Conditions Content */}
           <Form.Item name="content" initialValue={content}>
             <ReactQuill
-              value={content}
+              value={privacyPolicy?.data?.attributes?.content}
               onChange={(value) => setContent(value)}
+              placeholder="Write your terms and conditions here..."
               modules={{
                 toolbar: [
                   [{ header: [1, 2, 3, 4, 5, 6, false] }], // Header dropdown

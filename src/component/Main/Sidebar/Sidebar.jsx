@@ -52,6 +52,8 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
   const [showModal, setShowModal] = useState(false);
 
   const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
     dispatch(logoutUser());
     navigate("/auth");
   };
@@ -97,7 +99,7 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
         <div onClick={toggleSidebar} className="absolute top-0 right-0 p-4">
           <RxCross1 className="size-6 text-black" />
         </div>
-        <div className="flex flex-col justify-center items-center pt-5 gap-2 bg-white text-white">
+        <div className="flex flex-col justify-center items-center pt-5 gap-2">
           <img src={logo} alt="logo" className="h-20 mb-5" />
         </div>
         <ul className="flex flex-col gap-3 mt-10">
@@ -124,8 +126,8 @@ const Sidebar = ({ isSidebarOpen, toggleSidebar }) => {
           }}
           className="flex items-center gap-2 px-10 ml-5 mt-5"
         >
-          <IoIosLogOut className="size-8   p-1 text-[#ffd400] rounded-md" />
-          <span className="text-[#ffd400] ">Logout</span>
+          <IoIosLogOut className="size-8   p-1 text-[#d80909] rounded-md" />
+          <span className="text-[#d80909] ">Logout</span>
         </button>
       </div>
 

@@ -15,8 +15,8 @@ import UsersPage from "../page/Users/UsersPage";
 // import AddItemPage from "../page/AddItem/AddItemPage";
 import Notification from "../component/Main/Notification/Notification";
 import EditPersonalInformationPage from "../page/EditPersonalInformationPage/EditPersonalInformationPage";
-// import AdminRoutes from "./AdminRoutes";
 import EditPrivacyPolicy from "../page/EditPrivacyPolicy/EditPrivacyPolicy";
+import AdminRoutes from "./AdminRoutes";
 import EditTermsConditions from "../page/EditTermsConditions/EditTermsConditions";
 import EditAboutUs from "../page/EditAboutUs/EditAboutUs";
 import CategoriesPage from "../page/Categories/CategoriesPage";
@@ -66,10 +66,10 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: (
-      // <AdminRoutes>
-      // </AdminRoutes>
-      // <PrivetRout1e>  
-      <MainLayout />
+      <AdminRoutes>
+        <MainLayout />
+      </AdminRoutes>
+      // <PrivetRout1e>
       // </PrivetRout1e>
     ),
     errorElement: <h1>Error</h1>,

@@ -4,30 +4,41 @@ import { Button, Form, message } from "antd";
 import ReactQuill from "react-quill"; // Import React Quill
 import "react-quill/dist/quill.snow.css"; // Import Quill styles
 import { useEffect, useState } from "react";
-import { useGetAllSettingsQuery, useUpdateAboutUsMutation } from "../../redux/features/setting/settingApi";
+import { useGetAboutUsQuery, useUpdateAboutUsMutation } from "../../redux/features/setting/settingApi";
 
 const EditAboutUs = () => {
   const [updateAboutUs, { isLoading }] = useUpdateAboutUsMutation();
-  const { data: privacyPolicy, isFetching } = useGetAllSettingsQuery();
+  const { data: privacyPolicy, refetch } = useGetAboutUsQuery();
+
   const navigate = useNavigate();
   const [form] = Form.useForm();
   const [content, setContent] = useState(""); // State for Quill content
 
   console.log(content);
 
-  // Set default value when API data is available
   useEffect(() => {
-    if (privacyPolicy?.aboutUs) {
-      setContent(privacyPolicy.aboutUs);
+    if (privacyPolicy?.data?.attributes?.content) {
+      // If the content is encoded, decode it
+      const decodedContent = decodeHtml(privacyPolicy?.data?.attributes?.content);
+      setContent(decodedContent); // Set content here
     }
   }, [privacyPolicy]);
+
+  // Decode HTML entities (like &lt; to <)
+  const decodeHtml = (html) => {
+    const txt = document.createElement("textarea");
+    txt.innerHTML = html;
+    return txt.value;
+  };
 
   const handleSubmit = async () => {
     console.log("Updated About Us Content:", content);
 
     try {
-      const res = await updateAboutUs({ aboutUs: content }).unwrap();
-      if (res?.success) {
+      const res = await updateAboutUs({ content: content }).unwrap();
+      console.log("Update Response:", res);
+      // Check if the response indicates success
+      if (res?.code === 200) {
         message.success(res?.message);
         navigate("/settings/about-us");
       }
@@ -36,7 +47,6 @@ const EditAboutUs = () => {
       message.error("Failed to update About Us.");
     }
   };
-
 
   return (
     <section className="w-full h-full min-h-screen">
@@ -54,9 +64,10 @@ const EditAboutUs = () => {
           {/* React Quill for About Us Content */}
           <Form.Item name="content">
             <ReactQuill
-              value={content} // Directly use content as the value
-              defaultValue={content} // Default value              
-              onChange={setContent} // Update state
+              value={content} // Set content as the value here
+              placeholder="Write about us here..." // Placeholder text
+              onChange={setContent} // Update state on change
+              // theme="snow"
               modules={{
                 toolbar: [
                   [{ header: [1, 2, 3, 4, 5, 6, false] }],
@@ -82,9 +93,9 @@ const EditAboutUs = () => {
               type="primary"
               htmlType="submit"
               className="bg-[#ffd400] text-white px-5 text-xl py-2 rounded-md"
-              loading={isLoading || isFetching} // Show loading state
+              loading={isLoading} // Show loading state
             >
-              {isLoading || isFetching ? "Updating..." : "Update"}
+              {isLoading ? "Updating..." : "Update"}
             </Button>
           </div>
         </Form>
