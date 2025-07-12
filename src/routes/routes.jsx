@@ -86,9 +86,6 @@ const router = createBrowserRouter([
         path: "users/:id",
         element: <UserDetails />,
       },
- 
- 
-
       {
         path: "subscription",
         element: <Subscription />,
@@ -97,8 +94,6 @@ const router = createBrowserRouter([
         path: "subscription/user-list",
         element: <SubscriptionUserList />,
       },
-
-
       {
         path: "/notification",
         element: <Notification />,

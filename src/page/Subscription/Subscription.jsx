@@ -23,6 +23,7 @@ const Subscription = () => {
         setIsEditing(edit);
         setIsModalVisible(true);
         if (edit) {
+
             setSubscriptionName(subscription.title);
             setPrice(subscription.price);
             setDuration(subscription.duration); // month or year
@@ -77,11 +78,12 @@ const Subscription = () => {
         }
     };
 
-    const [updateScription] = useUpdateScriptionMutation();
+    const [updateScription, { isLoading: isUpdating }] = useUpdateScriptionMutation();
+
 
     const handleUpdate = async (e) => {
-
         e.preventDefault();
+        
         const formData = {
             title: subscriptionName,
             price,
@@ -89,7 +91,7 @@ const Subscription = () => {
             features,
 
         };
-        console.log(id, formData);
+
 
         try {
             const response = await updateScription({ formData, id }).unwrap();
