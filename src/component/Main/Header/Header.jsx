@@ -10,15 +10,20 @@ import { MdNotificationsNone } from "react-icons/md";
 import { useGetUserProfileQuery } from "../../../redux/features/setting/settingApi";
 import { useEffect } from "react";
 import Url from "../../../redux/baseApi/forImageUrl";
+import { useGetAllNotificationsQuery } from "../../../redux/features/notification/notification";
 
 const Header = ({ toggleSidebar }) => {
   const navigate = useNavigate();
 
   const { data: userProfile, refetch } = useGetUserProfileQuery();
-
   const user = userProfile?.data;
-  // console.log(user); 
-  
+
+
+  const { data } = useGetAllNotificationsQuery();
+  const notifications = data?.data?.attributes?.notifications || [];
+  const unreadCount = notifications.filter((item) => item.status === "unread").length;
+
+
   useEffect(() => {
     refetch();
   }, [refetch]);
@@ -40,7 +45,7 @@ const Header = ({ toggleSidebar }) => {
         <Link to={"/notification"}>
           <h1 className="relative text-[#344f47] p-2 rounded-full bg-white">
             <MdNotificationsNone className="size-8" />
-            {/* <span className="absolute top-0 right-0 w-5 h-5 text-white text-xs flex justify-center items-center bg-red-500 rounded-full">99+</span> */}
+            <span className="absolute top-0 right-0 w-5 h-5 text-white text-xs flex justify-center items-center bg-red-500 rounded-full">{unreadCount}</span>
           </h1>
 
         </Link>

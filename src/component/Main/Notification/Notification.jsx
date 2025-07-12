@@ -1,87 +1,21 @@
-import { Pagination } from "antd";
+import { message, Pagination } from "antd";
 import { useState } from "react";
 import { FaAngleLeft } from "react-icons/fa";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { Link } from "react-router-dom";
 import moment from "moment";
-import { useGetAllNotificationsQuery } from "../../../redux/features/notification/notification";
+import { useGetAllNotificationsQuery, useMarkNotificationAsReadMutation } from "../../../redux/features/notification/notification";
 
 const Notification = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const { data } = useGetAllNotificationsQuery();
   const notifications = data?.data?.attributes?.notifications || [];
-  console.log(notifications);
-
-  // Demo Data (Replace with your actual API data)
-  const allNotification = {
-    notifications: [
-      {
-        id: 1,
-        message: "Your apartment unit has been successfully added!",
-        createdAt: "2023-06-18T12:30:00Z",
-      },
-      {
-        id: 2,
-        message: "New payment received for Studio 1 unit.",
-        createdAt: "2023-06-19T14:45:00Z",
-      },
-      {
-        id: 3,
-        message: "Your rental agreement for Penthouse 2 has been approved.",
-        createdAt: "2023-06-20T16:10:00Z",
-      },
-      {
-        id: 4,
-        message: "New tenant has moved into the 3 Bedroom unit.",
-        createdAt: "2023-06-21T09:00:00Z",
-      },
-      {
-        id: 5,
-        message: "You have a pending maintenance request for Studio 4.",
-        createdAt: "2023-06-22T11:15:00Z",
-      },
-      {
-        id: 6,
-        message: "Reminder: Rent payment is due tomorrow for Studio 3.",
-        createdAt: "2023-06-23T08:30:00Z",
-      },
-      {
-        id: 7,
-        message: "The new rental policy has been updated in your dashboard.",
-        createdAt: "2023-06-24T10:00:00Z",
-      },
-      {
-        id: 8,
-        message: "Your tenant has requested a lease extension for Studio 2.",
-        createdAt: "2023-06-25T12:45:00Z",
-      },
-      {
-        id: 9,
-        message: "The maintenance issue for Studio 1 has been resolved.",
-        createdAt: "2023-06-26T13:30:00Z",
-      },
-      {
-        id: 10,
-        message: "You have received a 5-star rating from your tenant in Penthouse 1.",
-        createdAt: "2023-06-27T14:00:00Z",
-      },
-      {
-        id: 11,
-        message: "Your lease renewal for 2 Bedroom unit is due in 30 days.",
-        createdAt: "2023-06-28T09:30:00Z",
-      },
-      {
-        id: 12,
-        message: "Reminder: Please update your contact information in the system.",
-        createdAt: "2023-06-29T15:15:00Z",
-      },
-    ],
-  };
-
-  const pageSize = 10; // Show 5 notifications per page
+  const unreadCount = notifications.filter((item) => item.status === "unread").length;
+  
+  const pageSize = 10; // Show 10 notifications per page
 
   // Pagination Logic
-  const paginatedNotifications = notifications?.slice(
+  const paginatedNotifications = notifications.slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize
   );
@@ -90,17 +24,33 @@ const Notification = () => {
     setCurrentPage(page);
   };
 
+  const [markNotificationAsRead] = useMarkNotificationAsReadMutation();
+  const handleNotificationClick = (id) => {
+    try {
+      const res = markNotificationAsRead(id);
+      if (res) {
+        message.success("Notification marked as read successfully.");
+      }
+    } catch (error) {
+      console.error("Error marking notification as read:", error);
+      message.error("Failed to mark notification as read. Please try again.");
+    }
+    console.log("Notification clicked:", id);
+  };
+
   return (
     <div className="p-4">
       <Link to={"/"} className="text-2xl flex items-center mb-4">
-        <FaAngleLeft /> Notification {notifications.length > 0 ? `(${notifications.length})` : "00"}
+        <FaAngleLeft /> Notification
+        {unreadCount > 0 ? `(${unreadCount})` : "00"}
       </Link>
 
       <div className="space-y-4">
         {paginatedNotifications?.map((item) => (
           <div
             key={item.id}
-            className="border border-[#ffd400] hover:bg-[#ffd4003b] cursor-pointer rounded-md p-4 flex items-center space-x-4"
+            onClick={() => handleNotificationClick(item._id)} // Add a click handler if needed
+            className={`border border-[#ffd400] cursor-pointer rounded-md p-4 flex items-center space-x-4 ${item?.status === "unread" ? "bg-[#ffd4003b]" : "bg-white"}`}
           >
             <div className="text-[#ffd400] border border-[#ffd400] rounded-full p-2">
               <span className="bg-[#ffd400] p-1.5 rounded-full absolute ml-4 z-20"></span>
@@ -118,7 +68,7 @@ const Notification = () => {
       <div className="mt-4 flex justify-center">
         <Pagination
           current={currentPage}
-          total={allNotification?.notifications.length}
+          total={notifications.length} // Correct total count based on the actual data
           pageSize={pageSize}
           onChange={onPageChange}
         />

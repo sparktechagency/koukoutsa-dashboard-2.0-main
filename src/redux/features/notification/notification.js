@@ -12,12 +12,12 @@ const notificationApi = baseApi.injectEndpoints({
         }),
         markNotificationAsRead: builder.mutation({
             query: (id) => ({
-                url: `/notification/mark-as-read/${id}`,
-                method: "POST",
+                url: `/notification/${id}`,
+                method: "PATCH",
             }),
             invalidatesTags: ["Notification"],
         }),
-        
+
     }),
 })
 
