@@ -76,7 +76,7 @@ const Notification = () => {
               <span className="bg-[#ffd400] p-1.5 rounded-full absolute ml-4 z-20"></span>
               <IoMdNotificationsOutline size={30} className="relative" />
             </div>
-            <div>
+            <div> 
               <p className="font-semibold">{item?.content}</p>
               <p className="text-gray-500">{moment(item?.createdAt).fromNow()}</p>
             </div>
