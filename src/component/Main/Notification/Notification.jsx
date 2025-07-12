@@ -4,14 +4,15 @@ import { FaAngleLeft } from "react-icons/fa";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { Link } from "react-router-dom";
 import moment from "moment";
-import { useGetAllNotificationsQuery, useMarkNotificationAsReadMutation } from "../../../redux/features/notification/notification";
+import { useGetAllNotificationsQuery, useMarkNotificationAsReadMutation, useReadAllMarkedMutation } from "../../../redux/features/notification/notification";
+import { FaRegSquareCheck } from "react-icons/fa6";
 
 const Notification = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const { data } = useGetAllNotificationsQuery();
   const notifications = data?.data?.attributes?.notifications || [];
   const unreadCount = notifications.filter((item) => item.status === "unread").length;
-  
+
   const pageSize = 10; // Show 10 notifications per page
 
   // Pagination Logic
@@ -38,12 +39,30 @@ const Notification = () => {
     console.log("Notification clicked:", id);
   };
 
+  const [markAllAsRead] = useReadAllMarkedMutation();
+
+  const readAllNotifications = async () => {
+    try {
+      const res = await markAllAsRead();
+      console.log("All notifications marked as read:", res);
+      if (res?.data?.code === 200) {
+        message.success("All notifications marked as read successfully.");
+      }
+    } catch (error) {
+      console.error("Error marking all notifications as read:", error);
+      message.error("Failed to mark all notifications as read. Please try again.");
+    }
+  }
+
   return (
     <div className="p-4">
-      <Link to={"/"} className="text-2xl flex items-center mb-4">
-        <FaAngleLeft /> Notification
-        {unreadCount > 0 ? `(${unreadCount})` : "00"}
-      </Link>
+      <div className="flex justify-between items-center mb-4 flex-wrap">
+        <Link to={"/"} className="text-2xl flex items-center mb-4">
+          <FaAngleLeft /> Notification
+          {unreadCount > 0 ? `(${unreadCount})` : " (0)"}
+        </Link>
+        <button onClick={readAllNotifications} className="bg-[#ffd400] hover:bg-[#dfba27] text-white py-2 px-4 rounded flex items-center gap-2"><FaRegSquareCheck />Read All</button>
+      </div>
 
       <div className="space-y-4">
         {paginatedNotifications?.map((item) => (

@@ -9,7 +9,7 @@ const IncomeGraphChart = () => {
 
   const { data: datas } = useGetIncomeRatioQuery();
   const alldata = datas?.data?.attributes || [];
- 
+
 
 
   return (

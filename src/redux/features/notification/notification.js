@@ -17,11 +17,19 @@ const notificationApi = baseApi.injectEndpoints({
             }),
             invalidatesTags: ["Notification"],
         }),
+        readAllMarked: builder.mutation({
+            query: () => ({
+                url: `/notification/all/read-all`,
+                method: "PATCH",
+            }),
+            invalidatesTags: ["Notification"],
+        }),
 
     }),
 })
 
 export const {
     useGetAllNotificationsQuery,
-    useMarkNotificationAsReadMutation
+    useMarkNotificationAsReadMutation,
+    useReadAllMarkedMutation,
 } = notificationApi;
