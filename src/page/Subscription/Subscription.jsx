@@ -27,7 +27,7 @@ const Subscription = () => {
             setPrice(subscription.price);
             setDuration(subscription.duration); // month or year
             setFeatures(subscription.features || []); // Set features for edit
-            setId(subscription.id); // Pre-fill for editing
+            setId(subscription._id); // Pre-fill for editing
         } else {
             setSubscriptionName('');
             setPrice('');
@@ -80,6 +80,7 @@ const Subscription = () => {
     const [updateScription] = useUpdateScriptionMutation();
 
     const handleUpdate = async (e) => {
+
         e.preventDefault();
         const formData = {
             title: subscriptionName,
@@ -88,6 +89,7 @@ const Subscription = () => {
             features,
 
         };
+        console.log(id, formData);
 
         try {
             const response = await updateScription({ formData, id }).unwrap();

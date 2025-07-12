@@ -21,7 +21,7 @@ const subScriptionApi = baseApi.injectEndpoints({
         }),
         updateScription: builder.mutation({
             query: ({ formData, id }) => ({
-                url: `/subscription`, // ✅ Fixed API URL
+                url: `/subscription/${id}`, // ✅ Fixed API URL
                 method: "PATCH",
                 body: formData,
             }),
