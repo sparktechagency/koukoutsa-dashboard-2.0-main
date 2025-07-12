@@ -4,9 +4,13 @@ import { FaAngleLeft } from "react-icons/fa";
 import { IoMdNotificationsOutline } from "react-icons/io";
 import { Link } from "react-router-dom";
 import moment from "moment";
+import { useGetAllNotificationsQuery } from "../../../redux/features/notification/notification";
 
 const Notification = () => {
   const [currentPage, setCurrentPage] = useState(1);
+  const { data } = useGetAllNotificationsQuery();
+  const notifications = data?.data?.attributes?.notifications || [];
+  console.log(notifications);
 
   // Demo Data (Replace with your actual API data)
   const allNotification = {
@@ -74,10 +78,10 @@ const Notification = () => {
     ],
   };
 
-  const pageSize = 5; // Show 5 notifications per page
+  const pageSize = 10; // Show 5 notifications per page
 
   // Pagination Logic
-  const paginatedNotifications = allNotification?.notifications.slice(
+  const paginatedNotifications = notifications?.slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize
   );
@@ -89,7 +93,7 @@ const Notification = () => {
   return (
     <div className="p-4">
       <Link to={"/"} className="text-2xl flex items-center mb-4">
-        <FaAngleLeft /> Notification
+        <FaAngleLeft /> Notification {notifications.length > 0 ? `(${notifications.length})` : "00"}
       </Link>
 
       <div className="space-y-4">
@@ -103,7 +107,7 @@ const Notification = () => {
               <IoMdNotificationsOutline size={30} className="relative" />
             </div>
             <div>
-              <p className="font-semibold">{item?.message}</p>
+              <p className="font-semibold">{item?.content}</p>
               <p className="text-gray-500">{moment(item?.createdAt).fromNow()}</p>
             </div>
           </div>
