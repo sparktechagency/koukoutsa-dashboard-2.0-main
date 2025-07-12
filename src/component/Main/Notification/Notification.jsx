@@ -6,6 +6,7 @@ import { Link } from "react-router-dom";
 import moment from "moment";
 import { useGetAllNotificationsQuery, useMarkNotificationAsReadMutation, useReadAllMarkedMutation } from "../../../redux/features/notification/notification";
 import { FaRegSquareCheck } from "react-icons/fa6";
+import { TfiViewListAlt } from "react-icons/tfi";
 
 const Notification = () => {
   const [currentPage, setCurrentPage] = useState(1);
@@ -61,7 +62,7 @@ const Notification = () => {
           <FaAngleLeft /> Notification
           {unreadCount > 0 ? `(${unreadCount})` : " (0)"}
         </Link>
-        <button onClick={readAllNotifications} className="bg-[#ffd400] hover:bg-[#dfba27] text-white py-2 px-4 rounded flex items-center gap-2"><FaRegSquareCheck />Read All</button>
+        <button onClick={readAllNotifications} className="bg-[#ffd400] hover:bg-[#dfba27] text-white py-2 px-4 rounded flex items-center gap-2"><TfiViewListAlt />Read All</button>
       </div>
 
       <div className="space-y-4">
