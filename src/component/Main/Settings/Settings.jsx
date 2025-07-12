@@ -84,6 +84,7 @@ const Settings = () => {
 
     } catch (error) {
       console.log(error);
+      message.error(error?.data?.message);
     }
 
 

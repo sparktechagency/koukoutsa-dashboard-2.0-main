@@ -12,8 +12,9 @@ import Url from "../../redux/baseApi/forImageUrl";
 const PersonalinfoEdit = () => {
     const navigate = useNavigate();
     const [form] = Form.useForm();
-    const { data: userProfile, isLoading, refetch } = useGetUserProfileQuery();
-    const user = userProfile?.data;
+    const { data: userProfile, refetch } = useGetUserProfileQuery();
+    const user = userProfile?.data?.attributes?.user || {};
+    console.log(user);
 
     const [fileList, setFileList] = useState([]);
     const [imageUrl, setImageUrl] = useState(defaultUserImage);
@@ -28,7 +29,7 @@ const PersonalinfoEdit = () => {
                 email: user.email || "",
             });
             setPhoneNumber(user.phoneNumber || "");
-            setImageUrl(user.profileImageUrl ? Url + user.profileImageUrl : defaultUserImage);
+            setImageUrl(user.profileImage ? Url + user.profileImage : defaultUserImage);
         }
     }, [user, form]);
 
@@ -52,18 +53,18 @@ const PersonalinfoEdit = () => {
 
     const handleUpdateProfile = async (values) => {
         const formData = new FormData();
-        formData.append("name", values.name);
-        formData.append("phoneNumber", phoneNumber);
+        formData.append("fullName", values.name);
+        // formData.append("phoneNumber", phoneNumber);
 
         if (fileList[0]?.originFileObj) {
-            formData.append("imageOfProfile", fileList[0].originFileObj);
+            formData.append("profileImage", fileList[0].originFileObj);
         }
 
         try {
 
             const response = await updateProfile(formData).unwrap();
             console.log(response);
-            if (response?.code) {
+            if (response) {
                 message.success(response?.message);
                 navigate("/settings/personal-info");
             }
@@ -117,7 +118,7 @@ const PersonalinfoEdit = () => {
                                     <Input placeholder="Email" className="p-4 rounded-lg border-gray-300" readOnly />
                                 </Form.Item>
 
-                                <div className="flex flex-col">
+                                {/* <div className="flex flex-col">
                                     <label className="text-lg font-medium mb-2">Phone Number</label>
                                     <PhoneInput
                                         placeholder="Enter phone number"
@@ -127,7 +128,7 @@ const PersonalinfoEdit = () => {
                                         defaultCountry="bd"
                                         className="rounded-lg border-gray-300 py-3 focus:ring-blue-500 focus:border-blue-500 border-2 px-2"
                                     />
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>
