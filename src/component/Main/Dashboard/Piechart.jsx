@@ -33,7 +33,7 @@ const Piechart = () => {
   return (
     <div className="w-full col-span-full md:col-span-2 bg-white rounded-lg border border-primary p-5">
       <div className="flex justify-between mb-5">
-        <h2 className="text-xl font-semibold">Stutas Summary</h2>
+        <h2 className="text-xl font-semibold">Status Summary</h2>
 
       </div>
 
@@ -43,6 +43,7 @@ const Piechart = () => {
           <PieChart>
             <Pie
               data={pieData}  // Pass the correctly formatted data
+              
               dataKey="value"
               nameKey="name"
               outerRadius={150}

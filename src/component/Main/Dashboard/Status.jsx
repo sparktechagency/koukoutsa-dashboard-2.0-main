@@ -33,7 +33,7 @@ const Status = () => {
           <div className="w-16 h-16 flex justify-center items-center rounded-lg bg-[#ffd400]">
             <IoLogoEuro className="text-2xl text-white" />
           </div>
-          <h2 className="text-2xl font-semibold">Total Earning</h2>
+          <h2 className="text-2xl font-semibold">Total Earnings</h2>
         </div>
         <div className="flex items-center mt-5 gap-3">
           <h1 className="text-4xl font-semibold text-[#222222]">
