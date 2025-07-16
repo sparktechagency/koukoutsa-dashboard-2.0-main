@@ -92,7 +92,7 @@ const Users = () => {
     <section>
       <div className="md:flex justify-between items-center py-6 mb-4">
         <Link to={"/"} className="text-2xl flex items-center">
-          <FaAngleLeft /> User list {detailsVisible ? "Details" : ""}
+          <FaAngleLeft /> User list {detailsVisible ? "Details" : ""} 
         </Link>
         <Form layout="inline" className="flex space-x-4">
           <Item name="date">
