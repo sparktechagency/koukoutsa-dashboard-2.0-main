@@ -1,3 +1,3 @@
-const Url = 'https://nimur3000.sobhoy.com'
+const Url = 'https://api.koukoutsa.com'
 
 export default Url
