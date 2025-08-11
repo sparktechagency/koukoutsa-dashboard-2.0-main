@@ -1,29 +1,31 @@
 import { IoChevronBack } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import { TbEdit } from "react-icons/tb";
-import CustomButton from "../../utils/CustomButton";
 import { Spin } from "antd"; // Importing Spin
-import { useEffect } from "react";
-import { useGetAllSettingsQuery, useGetTermsAndConditionsQuery } from "../../redux/features/setting/settingApi";
+import { useEffect, useState } from "react";
+import { useGetTermsAndConditionsQuery } from "../../redux/features/setting/settingApi";
+import he from "he"; // Import the 'he' package to decode HTML entities
 
 const TermsconditionPage = () => {
-
-
-  const { data: privacyPolicy, isLoading, refetch } = useGetTermsAndConditionsQuery();
-
-  console.log(privacyPolicy?.data?.attributes?.content);
+  const { data: termsAndConditions, isLoading, refetch } = useGetTermsAndConditionsQuery();
+  const [decodedContent, setDecodedContent] = useState("");
 
   useEffect(() => {
+    // Refetch data on mount
     refetch();
-  }, []);
+
+    // Decode the HTML content if available
+    if (termsAndConditions?.data?.attributes?.content) {
+      const decoded = he.decode(termsAndConditions?.data?.attributes?.content); // Decode HTML entities
+      setDecodedContent(decoded); // Store decoded content in state
+    }
+  }, [termsAndConditions, refetch]);
 
   return (
     <section className="w-full h-full min-h-screen">
       <div className="flex justify-between items-center py-5">
         <Link to="/settings" className="flex gap-4 items-center">
-          <>
-            <IoChevronBack className="text-2xl" />
-          </>
+          <IoChevronBack className="text-2xl" />
           <h1 className="text-2xl font-semibold">Terms of Conditions</h1>
         </Link>
         <Link to={"/settings/edit-terms-conditions/11"}>
@@ -42,17 +44,12 @@ const TermsconditionPage = () => {
         <div className="flex justify-center items-center h-screen">
           <Spin size="large" />
         </div>
-      )
-        :
-        (
-          <div className="w-full h-full ml-3">
-            <div dangerouslySetInnerHTML={{ __html: privacyPolicy?.data?.attributes?.content }} />
-          </div>
-        )
-      }
-
-      {/* Show content if data is available */}
-
+      ) : (
+        <div className="w-full h-full ml-3">
+          {/* Render decoded HTML content */}
+          <div dangerouslySetInnerHTML={{ __html: decodedContent }} />
+        </div>
+      )}
     </section>
   );
 };

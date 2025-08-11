@@ -2,16 +2,25 @@ import { IoChevronBack } from "react-icons/io5";
 import { Link, useNavigate } from "react-router-dom";
 import ReactQuill from "react-quill"; // Import React Quill
 import "react-quill/dist/quill.snow.css"; // Import Quill styles
-import { useState } from "react";
-import { Form, message } from "antd";
-import { useUpdatePrivacyPolicyAllMutation } from "../../redux/features/setting/settingApi"; // ✅ FIXED
+import { useState, useEffect } from "react";
+import { Form, message, Spin } from "antd";
+import { useUpdatePrivacyPolicyAllMutation, useGetPrivacyPolicyQuery } from "../../redux/features/setting/settingApi"; // ✅ FIXED
 
 const EditPrivacyPolicy = () => {
   const [form] = Form.useForm();
   const [content, setContent] = useState(""); // Default content for the privacy policy
 
+  // Fetch current privacy policy
+  const { data: privacyPolicy, isLoading: isFetching } = useGetPrivacyPolicyQuery();
   const [updatePrivacyPolicy, { isLoading }] = useUpdatePrivacyPolicyAllMutation(); // ✅ FIXED
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // When the data is fetched, set it as the default content in the editor
+    if (privacyPolicy?.data?.attributes?.content) {
+      setContent(privacyPolicy?.data?.attributes?.content);
+    }
+  }, [privacyPolicy]);
 
   const handleSubmit = async () => {
     console.log("Updated Privacy Policy Content:", content);
@@ -39,46 +48,53 @@ const EditPrivacyPolicy = () => {
         </Link>
       </div>
 
-      {/* Form Section */}
-      <div className="w-full p-6 rounded-lg shadow-md">
-        <Form form={form} layout="vertical" onFinish={handleSubmit}>
-          {/* React Quill for Privacy Policy Content */}
-          <Form.Item name="content" initialValue={content}>
-            <ReactQuill
-              value={content}
-              onChange={(value) => setContent(value)}
-              placeholder="Write your privacy policy here..."
-              modules={{
-                toolbar: [
-                  [{ header: [1, 2, 3, 4, 5, 6, false] }],
-                  [{ font: [] }],
-                  [{ list: "ordered" }, { list: "bullet" }],
-                  ["bold", "italic", "underline", "strike"],
-                  [{ align: [] }],
-                  [{ color: [] }, { background: [] }],
-                  ["blockquote", "code-block"],
-                  ["link", "image", "video"],
-                  [{ script: "sub" }, { script: "super" }],
-                  [{ indent: "-1" }, { indent: "+1" }],
-                  ["clean"],
-                ],
-              }}
-              style={{ height: "300px" }}
-            />
-          </Form.Item>
+      {/* Show Spinner while fetching data */}
+      {isFetching ? (
+        <div className="flex justify-center items-center h-screen">
+          <Spin size="large" />
+        </div>
+      ) : (
+        <div className="w-full p-6 rounded-lg shadow-md">
+          <Form form={form} layout="vertical" onFinish={handleSubmit}>
+            {/* React Quill for Privacy Policy Content */}
+            <Form.Item name="content" initialValue={content}>
+              <ReactQuill
+                value={content}
+                onChange={(value) => setContent(value)}
+                placeholder="Write your privacy policy here..."
+                defaultValue={content}
+                modules={{
+                  toolbar: [
+                    [{ header: [1, 2, 3, 4, 5, 6, false] }],
+                    [{ font: [] }],
+                    [{ list: "ordered" }, { list: "bullet" }],
+                    ["bold", "italic", "underline", "strike"],
+                    [{ align: [] }],
+                    [{ color: [] }, { background: [] }],
+                    ["blockquote", "code-block"],
+                    ["link", "image", "video"],
+                    [{ script: "sub" }, { script: "super" }],
+                    [{ indent: "-1" }, { indent: "+1" }],
+                    ["clean"],
+                  ],
+                }}
+                style={{ height: "300px" }}
+              />
+            </Form.Item>
 
-          {/* Update Button */}
-          <div className="w-full flex justify-end mt-20 md:mt-16">
-            <button
-              type="submit"
-              className="bg-[#ffd400] text-white text-xl gap-2 py-2 px-8 rounded-md font-bold"
-              disabled={isLoading}
-            >
-              {isLoading ? "Updating..." : "Update"}
-            </button>
-          </div>
-        </Form>
-      </div>
+            {/* Update Button */}
+            <div className="w-full flex justify-end mt-20 md:mt-16">
+              <button
+                type="submit"
+                className="bg-[#ffd400] text-white text-xl gap-2 py-2 px-8 rounded-md font-bold"
+                disabled={isLoading}
+              >
+                {isLoading ? "Updating..." : "Update"}
+              </button>
+            </div>
+          </Form>
+        </div>
+      )}
     </section>
   );
 };

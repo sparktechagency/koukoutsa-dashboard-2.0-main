@@ -1,31 +1,31 @@
 import { IoChevronBack } from "react-icons/io5";
 import { Link } from "react-router-dom";
 import { TbEdit } from "react-icons/tb";
-import CustomButton from "../../utils/CustomButton";
 import { Spin } from "antd"; // Importing Spin
-import { useGetAboutUsQuery, useGetAllSettingsQuery } from "../../redux/features/setting/settingApi";
-import { useEffect } from "react";
+import { useGetAboutUsQuery } from "../../redux/features/setting/settingApi";
+import { useState, useEffect } from "react";
+import he from "he"; // Import the 'he' package to decode HTML entities
 
 const AboutUsPage = () => {
-
-
-  const { data: privacyPolicy, isLoading, refetch } = useGetAboutUsQuery();
-
-  console.log(privacyPolicy?.data?.attributes?.content);
+  const { data: aboutUs, isLoading, refetch } = useGetAboutUsQuery();
+  const [decodedContent, setDecodedContent] = useState("");
 
   useEffect(() => {
+    // Refetch data on mount
     refetch();
-  }, []);
 
-
+    // Decode the HTML content if available
+    if (aboutUs?.data?.attributes?.content) {
+      const decoded = he.decode(aboutUs?.data?.attributes?.content); // Decode HTML entities
+      setDecodedContent(decoded); // Store decoded content in state
+    }
+  }, [aboutUs, refetch]);
 
   return (
     <section className="w-full h-full min-h-screen">
       <div className="flex justify-between items-center py-5">
         <Link to="/settings" className="flex gap-4 items-center">
-          <>
-            <IoChevronBack className="text-2xl" />
-          </>
+          <IoChevronBack className="text-2xl" />
           <h1 className="text-2xl font-semibold">About Us</h1>
         </Link>
         <Link to={"/settings/edit-about-us/11"}>
@@ -45,7 +45,10 @@ const AboutUsPage = () => {
           <Spin size="large" />
         </div>
       ) : (
-        <div dangerouslySetInnerHTML={{ __html: privacyPolicy?.data?.attributes?.content }} />
+        <div className="w-full h-full ml-3">
+          {/* Render decoded HTML content */}
+          <div dangerouslySetInnerHTML={{ __html: decodedContent }} />
+        </div>
       )}
     </section>
   );
