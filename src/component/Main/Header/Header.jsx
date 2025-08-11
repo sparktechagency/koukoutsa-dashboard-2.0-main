@@ -44,7 +44,7 @@ const Header = ({ toggleSidebar }) => {
 
       <div className="flex justify-between items-center gap-5">
         <Link to={"/notification"}>
-          <h1 className="relative text-[#344f47] p-2 rounded-full bg-white">
+          <h1 className="relative text-[#ffd400] p-2 rounded-full bg-white">
             <MdNotificationsNone className="size-8" />
             <span className="absolute top-0 right-0 w-5 h-5 text-white text-xs flex justify-center items-center bg-red-500 rounded-full">{unreadCount}</span>
           </h1>
